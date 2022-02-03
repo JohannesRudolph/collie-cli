@@ -1,4 +1,4 @@
-import { Command, moment, Select} from "../deps.ts";
+import { Command, moment} from "../deps.ts";
 import { setupLogger } from "../logger.ts";
 import { MeshAdapterFactory } from "../mesh/mesh-adapter.factory.ts";
 import { TenantListPresenterFactory } from "../presentation/tenant-list-presenter-factory.ts";
