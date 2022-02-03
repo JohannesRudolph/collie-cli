@@ -35,7 +35,7 @@ export {
   Type,
 } from "https://deno.land/x/cliffy@v0.19.2/command/mod.ts";
 export type { ITypeInfo } from "https://deno.land/x/cliffy@v0.19.2/command/mod.ts";
-export { Table } from "https://deno.land/x/cliffy@v0.19.2/table/mod.ts";
+export { Table, Cell } from "https://deno.land/x/cliffy@v0.19.2/table/mod.ts";
 export {
   Confirm,
   Input,

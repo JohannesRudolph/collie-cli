@@ -1,4 +1,4 @@
-import { Command, moment } from "../deps.ts";
+import { Command, moment, Select} from "../deps.ts";
 import { setupLogger } from "../logger.ts";
 import { MeshAdapterFactory } from "../mesh/mesh-adapter.factory.ts";
 import { TenantListPresenterFactory } from "../presentation/tenant-list-presenter-factory.ts";
@@ -12,6 +12,7 @@ import { MeshTableFactory } from "../presentation/mesh-table-factory.ts";
 import { verifyCliAvailability } from "../init.ts";
 import { QueryStatistics } from "../mesh/query-statistics.ts";
 import { MeshError } from "../errors.ts";
+import { startInteractiveMode } from "./interactive/start-interactive-mode.ts"
 
 interface CmdListCostsOptions extends CmdGlobalOptions {
   from: string;
@@ -94,14 +95,21 @@ export function registerTenantCommand(program: Command) {
     )
     .action(listIamAction);
 
+  const interactiveMode = new Command()
+    .description(
+      "Starts the interactive Mode.",
+    )
+    .action(startInteractiveMode);
+
   tenantCmd
     .command("list", listTenants)
     .command("costs", listCosts)
     .command("iam", listIam)
+    .command("interactive", interactiveMode)
     .command("analyze-tags", analyzeTags);
 }
 
-async function listTenantAction(options: CmdGlobalOptions) {
+export async function listTenantAction(options: CmdGlobalOptions) {
   await setupLogger(options);
   await verifyCliAvailability();
 
@@ -114,7 +122,6 @@ async function listTenantAction(options: CmdGlobalOptions) {
   );
 
   const allTenants = await meshAdapter.getMeshTenants();
-
   const tableFactory = new MeshTableFactory(isatty);
 
   const presenterFactory = new TenantListPresenterFactory(tableFactory);
@@ -191,3 +198,5 @@ export async function listTenantsCostAction(options: CmdListCostsOptions) {
   );
   presenter.present();
 }
+
+
