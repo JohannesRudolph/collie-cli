@@ -1,4 +1,4 @@
-import { Command, moment} from "../deps.ts";
+import { Command, moment } from "../deps.ts";
 import { setupLogger } from "../logger.ts";
 import { MeshAdapterFactory } from "../mesh/mesh-adapter.factory.ts";
 import { TenantListPresenterFactory } from "../presentation/tenant-list-presenter-factory.ts";
@@ -12,7 +12,7 @@ import { MeshTableFactory } from "../presentation/mesh-table-factory.ts";
 import { verifyCliAvailability } from "../init.ts";
 import { QueryStatistics } from "../mesh/query-statistics.ts";
 import { MeshError } from "../errors.ts";
-import { startInteractiveMode } from "./interactive/start-interactive-mode.ts"
+import { startInteractiveMode } from "./interactive/start-interactive-mode.ts";
 
 interface CmdListCostsOptions extends CmdGlobalOptions {
   from: string;
@@ -198,5 +198,3 @@ export async function listTenantsCostAction(options: CmdListCostsOptions) {
   );
   presenter.present();
 }
-
-
