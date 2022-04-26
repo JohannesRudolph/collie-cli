@@ -1,15 +1,15 @@
 import { AzureCliFacade } from "./azure-cli-facade.ts";
 import { AzureMeshAdapter } from "./azure-mesh-adapter.ts";
-import { TimeWindowCalculator } from "../mesh/time-window-calculator.ts";
+import { TimeWindowCalculator } from "/mesh/time-window-calculator.ts";
 import { RoleAssignment, Subscription } from "./azure.model.ts";
-import { MeshPlatform, MeshTenant } from "../mesh/mesh-tenant.model.ts";
-import { assertEquals } from "../dev-deps.ts";
+import { MeshPlatform, MeshTenant } from "/mesh/mesh-tenant.model.ts";
+import { assertEquals } from "/dev-deps.ts";
 import {
   MeshPrincipalType,
   MeshRoleAssignmentSource,
   MeshTenantRoleAssignment,
-} from "../mesh/mesh-iam-model.ts";
-import { MeshTenantChangeDetector } from "../mesh/mesh-tenant-change-detector.ts";
+} from "/mesh/mesh-iam-model.ts";
+import { MeshTenantChangeDetector } from "/mesh/mesh-tenant-change-detector.ts";
 
 const cli = {
   getRoleAssignments(): Promise<RoleAssignment[]> {

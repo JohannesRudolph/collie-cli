@@ -3,10 +3,10 @@ import {
   MeshAzurePlatformError,
   MeshAzureRetryableError,
   MeshNotLoggedInError,
-} from "../errors.ts";
-import { ShellOutput } from "../process/shell-output.ts";
-import { ShellRunner } from "../process/shell-runner.ts";
-import { moment } from "../deps.ts";
+} from "/errors.ts";
+import { ShellOutput } from "/process/shell-output.ts";
+import { ShellRunner } from "/process/shell-runner.ts";
+import { moment } from "/deps.ts";
 import { AzureCliFacade, DynamicInstallValue } from "./azure-cli-facade.ts";
 import {
   AzureMeshTag,
@@ -17,8 +17,8 @@ import {
   Subscription,
   Tag,
 } from "./azure.model.ts";
-import { CLICommand } from "../config/config.model.ts";
-import { parseJsonWithLog } from "../json.ts";
+import { CLICommand } from "/config/config.model.ts";
+import { parseJsonWithLog } from "/json.ts";
 
 interface ConfigValue {
   name: string;
@@ -27,9 +27,7 @@ interface ConfigValue {
 }
 
 export class BasicAzureCliFacade implements AzureCliFacade {
-  constructor(
-    private readonly shellRunner: ShellRunner,
-  ) {}
+  constructor(private readonly shellRunner: ShellRunner) {}
 
   private readonly errRegexExtensionMissing =
     /ERROR: The command requires the extension (\w+)/;
@@ -45,18 +43,13 @@ export class BasicAzureCliFacade implements AzureCliFacade {
       `az config set extension.use_dynamic_install=${value}`,
     );
     this.checkForErrors(result);
-
-    console.debug(`setDynamicInstallValue: ${JSON.stringify(result)}`);
   }
 
   async getDynamicInstallValue(): Promise<DynamicInstallValue | null> {
     const command = "az config get extension.use_dynamic_install";
-    const result = await this.shellRunner.run(
-      command,
-    );
-    this.checkForErrors(result);
+    const result = await this.shellRunner.run(command);
 
-    console.debug(`getDynamicInstallValue: ${JSON.stringify(result)}`);
+    this.checkForErrors(result);
 
     if (result.code == 1) {
       return Promise.resolve(null);
@@ -70,23 +63,22 @@ export class BasicAzureCliFacade implements AzureCliFacade {
   async listAccounts(): Promise<Subscription[]> {
     const command = "az account list";
     const result = await this.shellRunner.run(command);
-    this.checkForErrors(result);
 
-    console.debug(`listAccounts: ${JSON.stringify(result)}`);
+    this.checkForErrors(result);
 
     return parseJsonWithLog(result.stdout);
   }
 
   async listTags(subscription: Subscription): Promise<Tag[]> {
     const command = `az tag list --subscription ${subscription.id}`;
-    const result = await this.shellRunner.run(
-      command,
-    );
+    const result = await this.shellRunner.run(command);
 
     // we need to catch the case where certain subscriptions might not be accessible for the user.
     // we will just ignore this in that case and continue.
     try {
       this.checkForErrors(result);
+
+      return parseJsonWithLog(result.stdout);
     } catch (e) {
       if (
         e instanceof MeshAzurePlatformError &&
@@ -95,14 +87,16 @@ export class BasicAzureCliFacade implements AzureCliFacade {
         console.error(
           `Could not list tags for Subscription ${subscription.id}: Access was denied`,
         );
-
-        return Promise.resolve([]);
+      } else {
+        // the error handling needs a revamp here anyway - it's tough to trace what command failed and with what output
+        // so we should probably fix this anyway with better azure specific shellRunner infrastructure
+        console.error(
+          `Could not list tags for Subscription ${subscription.id}, unknown error`,
+        );
       }
     }
 
-    console.debug(`listTags: ${JSON.stringify(result)}`);
-
-    return parseJsonWithLog(result.stdout);
+    return [];
   }
 
   /**
@@ -111,17 +105,14 @@ export class BasicAzureCliFacade implements AzureCliFacade {
    * @param tags The list of tags put onto the subscription.
    */
   async putTags(subscription: Subscription, tags: AzureMeshTag[]) {
-    const tagsString = tags.map((x) => `${x.tagName}=${x.values.join(",")}`)
+    const tagsString = tags
+      .map((x) => `${x.tagName}=${x.values.join(",")}`)
       .join(" ");
     const command =
       `az tag create --resource-id /subscriptions/${subscription.id} --tags ${tagsString}`;
 
-    const result = await this.shellRunner.run(
-      command,
-    );
+    const result = await this.shellRunner.run(command);
     this.checkForErrors(result);
-
-    console.debug(`putTags: ${JSON.stringify(result)}`);
   }
 
   /**
@@ -143,8 +134,6 @@ export class BasicAzureCliFacade implements AzureCliFacade {
 
     const result = await this.shellRunner.run(cmd);
     this.checkForErrors(result);
-
-    console.debug(`getCostManagementInfo: ${JSON.stringify(result)}`);
 
     const costManagementInfo = parseJsonWithLog<CostManagementInfo>(
       result.stdout,
@@ -181,8 +170,6 @@ export class BasicAzureCliFacade implements AzureCliFacade {
     const result = await this.shellRunner.run(cmd);
     this.checkForErrors(result);
 
-    console.debug(`getConsumptionInformation: ${JSON.stringify(result)}`);
-
     return parseJsonWithLog(result.stdout);
   }
 
@@ -194,8 +181,6 @@ export class BasicAzureCliFacade implements AzureCliFacade {
 
     const result = await this.shellRunner.run(cmd);
     this.checkForErrors(result);
-
-    console.debug(`getRoleAssignments: ${JSON.stringify(result)}`);
 
     return parseJsonWithLog<RoleAssignment[]>(result.stdout);
   }

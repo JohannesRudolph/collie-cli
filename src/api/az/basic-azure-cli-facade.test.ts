@@ -1,8 +1,8 @@
-import { moment } from "../deps.ts";
-import { assertThrowsAsync } from "../dev-deps.ts";
-import { MeshAzurePlatformError } from "../errors.ts";
-import { ShellOutput } from "../process/shell-output.ts";
-import { IShellRunner } from "../process/shell-runner.interface.ts";
+import { moment } from "/deps.ts";
+import { assertThrowsAsync } from "/dev-deps.ts";
+import { MeshAzurePlatformError } from "/errors.ts";
+import { ShellOutput } from "/process/shell-output.ts";
+import { IShellRunner } from "/process/shell-runner.interface.ts";
 import { Subscription } from "./azure.model.ts";
 import { BasicAzureCliFacade } from "./basic-azure-cli-facade.ts";
 
